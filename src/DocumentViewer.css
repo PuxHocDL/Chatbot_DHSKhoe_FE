@@ -1,0 +1,51 @@
+.document-viewer {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ddd;
+  background-color: #f8f9fa;
+  /* Thêm transition để hiệu ứng mượt mà */
+  transition: all 0.3s ease-in-out;
+}
+
+.document-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+.document-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.close-viewer-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-viewer-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.document-content {
+  flex-grow: 1;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.document-content iframe {
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
