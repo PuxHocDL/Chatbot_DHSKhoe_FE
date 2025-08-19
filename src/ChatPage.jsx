@@ -16,7 +16,7 @@ function ChatPage() {
   const [currentThreadId, setCurrentThreadId] = useState(null);
   const [editingThreadId, setEditingThreadId] = useState(null);
   const [tempThreadName, setTempThreadName] = useState('');
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // Thay đổi từ isSidebarOpen
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [viewingFileUrl, setViewingFileUrl] = useState(null);
 
   const messagesEndRef = useRef(null);
@@ -28,19 +28,16 @@ function ChatPage() {
       setThreads(data);
     } catch (error) {
       console.error("Failed to fetch threads:", error);
-      if (error.message.includes("Could not validate credentials")) {
-        logout();
-      }
     }
   };
 
   useEffect(() => {
     fetchThreads();
-  }, [logout]);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -87,7 +84,7 @@ function ChatPage() {
     setIsLoading(true);
     
     const isNewThread = !currentThreadId;
-    const threadIdToUse = currentThreadId || crypto.randomUUID();
+    const threadIdToUse = currentThreadId || `thread-${Date.now()}`;
     
     if (isNewThread) {
       setCurrentThreadId(threadIdToUse);
@@ -118,6 +115,7 @@ function ChatPage() {
   };
 
   const handleDeleteThread = async (threadIdToDelete) => {
+    // In a real app, use a custom modal component instead of window.confirm
     if (!window.confirm(`Bạn có chắc chắn muốn xóa cuộc trò chuyện này không?`)) return;
     try {
       await deleteThread(threadIdToDelete);
@@ -127,6 +125,7 @@ function ChatPage() {
       }
     } catch (error) {
       console.error("Lỗi khi xóa thread:", error);
+      // In a real app, use a toast notification instead of alert
       alert("Đã có lỗi xảy ra, không thể xóa cuộc trò chuyện.");
     }
   };
@@ -210,13 +209,13 @@ function ChatPage() {
             <h1>Chatbot Tư vấn Học vụ</h1>
           </div>
           <div className="header-actions">
-            <button onClick={startNewConversation} className="new-chat-btn"><IconMessagePlus size={20} /> Trò chuyện mới</button>
-            <button onClick={logout} className="logout-btn"><IconLogout size={20} /> Đăng xuất</button>
+            <button onClick={startNewConversation} className="new-chat-btn"><IconMessagePlus /> Trò chuyện mới</button>
+            <button onClick={logout} className="logout-btn"><IconLogout /> Đăng xuất</button>
           </div>
         </header>
         <main className="chat-messages">
           {messages.length === 0 && !isLoading && (
-            <div className="empty-chat-placeholder">
+            <div className="empty-chat-placeholder" style={{textAlign: 'center', margin: 'auto', color: '#666'}}>
               <h2>Xin chào!</h2>
               <p>Bạn cần hỗ trợ về vấn đề học vụ nào?</p>
             </div>
@@ -247,7 +246,13 @@ function ChatPage() {
           ))}
           {isLoading && (
             <div className="message ai">
-              <div className="message-bubble loading-bubble"><div className="spinner"></div></div>
+              <div className="message-bubble loading-bubble">
+                <div className="typing-indicator">
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                  <div className="dot"></div>
+                </div>
+              </div>
             </div>
           )}
           <div ref={messagesEndRef} />
