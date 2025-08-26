@@ -20,9 +20,6 @@ const request = async (endpoint, options = {}) => {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    // SỬA LỖI TẠI ĐÂY:
-    // 1. Ưu tiên method từ customConfig.
-    // 2. Nếu không có, mặc định là POST nếu có body, ngược lại là GET.
     const config = {
         method: customConfig.method || (body ? 'POST' : 'GET'),
         ...customConfig,
@@ -108,3 +105,63 @@ export const postChatMessage = (thread_id, message) => request('/chat', {
     // method mặc định là POST vì có body
     body: { thread_id, message }
 });
+
+/**
+ * Tải file tài liệu lên server.
+ * @param {FormData} formData - Đối tượng FormData chứa file và collection_name.
+ * @returns {Promise<any>}
+ */
+export const apiUploadDocument = async (formData) => {
+    const token = localStorage.getItem("userToken");
+    const headers = {};
+
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    // Lưu ý: Khi dùng FormData, không cần set 'Content-Type'. 
+    // Trình duyệt sẽ tự động làm điều đó với boundary phù hợp.
+
+    try {
+        const response = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            headers,
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            const errorMessage = data.detail || response.statusText;
+            throw new Error(errorMessage);
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error("Lỗi API khi upload:", error);
+        throw error;
+    }
+};
+export const deleteThreadsBatch = (thread_ids) => 
+    request('/threads/delete-batch', { 
+        method: 'POST', 
+        body: { thread_ids } 
+    });
+
+    // Lấy danh sách collections
+export const apiGetCollections = () => request('/collections');
+
+// Xóa một collection
+export const apiDeleteCollection = (collectionName) => 
+    request(`/collections/${collectionName}`, { method: 'DELETE' });
+
+export const apiGetDbStats = () => request('/collections/stats');
+
+export const apiGetCollectionDocuments = (collectionName, limit, offset) => 
+    request(`/collections/${collectionName}/documents?limit=${limit}&offset=${offset}`);
+
+
+export const apiGetResponseStats = () => request('/collections/response-stats');
+
+export const apiGetTokenUsageStats = () => request('/token-usage-stats');

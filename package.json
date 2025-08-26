@@ -11,11 +11,14 @@
   },
   "dependencies": {
     "@tabler/icons-react": "^3.34.1",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.540.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.7.1"
+    "react-router-dom": "^7.7.1",
+    "rehype-mathjax": "^7.1.0",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
